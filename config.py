@@ -145,8 +145,8 @@ commands = {
     'sol1_close': lambda: digital_write('DI_CH_SOL1', 1),
     'sol2_open': lambda: digital_write('DI_CH_SOL2', 0),
     'sol2_close': lambda: digital_write('DI_CH_SOL2', 1),
-    'dial_on': lambda: digital_write('DI_CH_DIAL_PWR', 0),
-    'dial_off': lambda: digital_write('DI_CH_DIAL_PWR', 1),
+    'dial_on': lambda: digital_write('DI_CH_DIAL_PWR', 1),
+    'dial_off': lambda: digital_write('DI_CH_DIAL_PWR', 0),
     'camera_on': lambda: digital_write('DI_CH_CAMERA_TRIG', 0),
     'camera_off': lambda: digital_write('DI_CH_CAMERA_TRIG', 1),
 }
