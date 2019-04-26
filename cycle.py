@@ -12,12 +12,14 @@ END_P = 100  # psi
 STEP_P = 1  # psi
 CYCLES_PER_STEP = 1
 LO_THRESH = 0.1  # psi
-HI_PAUSE = 2  # s
-LO_PAUSE = 1  # s (plus DIAL_RESET pauses)
+HI_PAUSE = 1  # s (plus dial/camera pauses)
+LO_PAUSE = 1  # s (plus dial/camera pauses)
 HI_MAX_TIME = 20  # s
 LO_MAX_TIME = 20  # s
 DIAL_RESET_PAUSE = 0.2  # s  0.2 is minimum
 DIAL_RESET_POWERON_PAUSE = 1  # s
+CAMERA_TRIGGER_PAUSE = 0.2  # s
+CAMERA_PICTURE_TAKING_PAUSE = 4  # s
 
 class State(object):
     def __init__(self, init_stat=''):
@@ -72,9 +74,11 @@ if __name__ == "__main__":
             if S.status == 'VENTED':
                 wait_and_log(LO_PAUSE)
                 commands['dial_off']()
-                wait_and_log(DIAL_RESET_PAUSE)
+                commands['camera_on']()
+                wait_and_log(max(DIAL_RESET_PAUSE, CAMERA_TRIGGER_PAUSE))
                 commands['dial_on']()
-                wait_and_log(DIAL_RESET_POWERON_PAUSE)
+                commands['camera_off']()
+                wait_and_log(max(DIAL_RESET_POWERON_PAUSE, CAMERA_PICTURE_TAKING_PAUSE))
                 S.change('INFLATING')
             if S.status == 'INFLATING':
                 print('p_set = {}'.format(p_set))
@@ -88,6 +92,10 @@ if __name__ == "__main__":
                 S.change('HOLDING')
             if S.status == 'HOLDING':
                 wait_and_log(HI_PAUSE)
+                commands['camera_on']()
+                wait_and_log(CAMERA_TRIGGER_PAUSE)
+                commands['camera_off']()
+                wait_and_log(CAMERA_PICTURE_TAKING_PAUSE)
                 S.change('DEFLATING')
             if S.status == 'DEFLATING':
                 deflating_start = time.time()
