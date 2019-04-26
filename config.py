@@ -22,6 +22,7 @@ DOS = {
     'DI_CH_SOL1': 7,  # FIO7
     'DI_CH_SOL2': 1,  # FIO1
     'DI_CH_DIAL_PWR': 5,  # FIO5
+    'DI_CH_CAMERA_TRIG': 0,  # FIO0
 }
 DOS_STATES = {k: -1 for (k, v) in DOS.items()}
 
@@ -113,6 +114,10 @@ readbacks = [
         'read': lambda: DOS_STATES['DI_CH_DIAL_PWR'],
         'print': lambda x: 'on' if x == 0 else 'off',
     }),
+    ('camera_trigger', {
+        'read': lambda: DOS_STATES['DI_CH_CAMERA_TRIG'],
+        'print': lambda x: 'on' if x == 0 else 'off',
+    }),
 ]
 
 # extract operations
@@ -142,6 +147,8 @@ commands = {
     'sol2_close': lambda: digital_write('DI_CH_SOL2', 1),
     'dial_on': lambda: digital_write('DI_CH_DIAL_PWR', 0),
     'dial_off': lambda: digital_write('DI_CH_DIAL_PWR', 1),
+    'camera_on': lambda: digital_write('DI_CH_CAMERA_TRIG', 0),
+    'camera_off': lambda: digital_write('DI_CH_CAMERA_TRIG', 1),
 }
 
 # file paths
