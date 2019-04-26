@@ -79,6 +79,7 @@ if __name__ == "__main__":
             if S.status == 'INFLATING':
                 print('p_set = {}'.format(p_set))
                 inflating_start = time.time()
+                commands['sol1_close']()
                 commands['sol2_open']()
                 wait_log_stop(HI_MAX_TIME, 'p', lambda p: p > p_set, inflating_trip_msg)
                 commands['sol2_close']()
@@ -92,7 +93,6 @@ if __name__ == "__main__":
                 deflating_start = time.time()
                 commands['sol1_open']()
                 wait_log_stop(LO_MAX_TIME, 'p', lambda p: p < LO_THRESH, deflating_trip_msg)
-                commands['sol1_close']()
                 deflating_time = time.time() - deflating_start
                 print('    deflating completed in {:.1f} s'.format(deflating_time))
                 S.change('VENTED')
