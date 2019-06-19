@@ -10,11 +10,13 @@ SLEEP = 0.1  # s
 START_P = 50  # psi
 END_P = 100  # psi
 STEP_P = 1  # psi
+FAST_P_THRESH = 10  # psi
 CYCLES_PER_STEP = 1
 LO_THRESH = 0.1  # psi
 HI_PAUSE = 1  # s (plus dial/camera pauses)
 LO_PAUSE = 1  # s (plus dial/camera pauses)
-HI_MAX_TIME = 20  # s
+HI_MAX_TIME_FAST = 10  # s
+HI_MAX_TIME_SLOW = 10  # s
 LO_MAX_TIME = 20  # s
 DIAL_RESET_PAUSE = 0.2  # s  0.2 is minimum
 DIAL_RESET_POWERON_PAUSE = 1  # s
@@ -60,6 +62,7 @@ if __name__ == "__main__":
     S = State()
     commands['sol1_close']()
     commands['sol2_close']()
+    commands['sol3_close']()
     commands['dial_off']()
     time.sleep(DIAL_RESET_PAUSE)
     commands['dial_on']()
@@ -84,6 +87,12 @@ if __name__ == "__main__":
                 print('p_set = {}'.format(p_set))
                 inflating_start = time.time()
                 commands['sol1_close']()
+                # fast pump
+                p_thresh = p_set - FAST_P_THRESH
+                if read_all()['p'] < p_thresh:
+                    commands['sol3_open']()
+                    wait_log_stop(HI_MAX_TIME_FAST, 'p', lambda p: p > p_thresh, inflating_trip_msg)
+                    commands['sol3_stop']()
                 commands['sol2_open']()
                 wait_log_stop(HI_MAX_TIME, 'p', lambda p: p > p_set, inflating_trip_msg)
                 commands['sol2_close']()

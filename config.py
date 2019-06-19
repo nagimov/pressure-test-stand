@@ -16,11 +16,12 @@ AN_HI_CUR = 0.020  # A
 AN_LO_VOLT = AN_LO_CUR * AN_RES
 AN_HI_VOLT = AN_HI_CUR * AN_RES
 AN_LO = 0  # psi
-AN_HI = 300  # psi
+AN_HI = 1000  # psi
 # digital outputs
 DOS = {
-    'DI_CH_SOL1': 7,  # FIO7
-    'DI_CH_SOL2': 1,  # FIO1
+    'DI_CH_SOL1': 7,  # FIO7 (vent)
+    'DI_CH_SOL2': 1,  # FIO1 (slow pump)
+    'DI_CH_SOL3': 4,  # FIO4 (fast pump)
     'DI_CH_DIAL_PWR': 5,  # FIO5
     'DI_CH_CAMERA_TRIG': 0,  # FIO0
 }
@@ -110,6 +111,10 @@ readbacks = [
         'read': lambda: DOS_STATES['DI_CH_SOL2'],
         'print': lambda x: 'open' if x == 0 else 'closed',
     }),
+    ('sol3', {
+        'read': lambda: DOS_STATES['DI_CH_SOL3'],
+        'print': lambda x: 'open' if x == 0 else 'closed',
+    }),
     ('dial_reset', {
         'read': lambda: DOS_STATES['DI_CH_DIAL_PWR'],
         'print': lambda x: 'on' if x == 0 else 'off',
@@ -145,6 +150,8 @@ commands = {
     'sol1_close': lambda: digital_write('DI_CH_SOL1', 1),
     'sol2_open': lambda: digital_write('DI_CH_SOL2', 0),
     'sol2_close': lambda: digital_write('DI_CH_SOL2', 1),
+    'sol3_open': lambda: digital_write('DI_CH_SOL3', 0),
+    'sol3_close': lambda: digital_write('DI_CH_SOL3', 1),
     'dial_on': lambda: digital_write('DI_CH_DIAL_PWR', 1),
     'dial_off': lambda: digital_write('DI_CH_DIAL_PWR', 0),
     'camera_on': lambda: digital_write('DI_CH_CAMERA_TRIG', 0),
