@@ -10,7 +10,8 @@ SLEEP = 0.1  # s
 START_P = 50  # psi
 END_P = 100  # psi
 STEP_P = 1  # psi
-FAST_P_THRESH = 10  # psi
+FAST_P_THRESH = 50  # psi (threshold at which fast pump closes)
+FAST_P_MIN = 150  # psi (pressure at which fast pump kicks in)
 CYCLES_PER_STEP = 1
 LO_THRESH = 0.1  # psi
 HI_PAUSE = 1  # s (plus dial/camera pauses)
@@ -38,8 +39,9 @@ def wait_and_log(pause):
         time.sleep(SLEEP)
 
 def interlock(msg):
-    commands['sol1_close']()
-    commands['sol2_open']()
+    commands['sol1_open']()
+    commands['sol2_close']()
+    commands['sol3_close']()
     print(msg)
     sys.exit()
 
@@ -87,14 +89,18 @@ if __name__ == "__main__":
                 print('p_set = {}'.format(p_set))
                 inflating_start = time.time()
                 commands['sol1_close']()
-                # fast pump
-                p_thresh = p_set - FAST_P_THRESH
-                if read_all()['p'] < p_thresh:
-                    commands['sol3_open']()
-                    wait_log_stop(HI_MAX_TIME_FAST, 'p', lambda p: p > p_thresh, inflating_trip_msg)
-                    commands['sol3_stop']()
+                # fast inflating
+                if p_set > FAST_P_MIN:
+                    p_thresh = p_set - FAST_P_THRESH
+                    if read_all()['p'] < p_thresh:
+                        print('fast pump')
+                        commands['sol2_open']()
+                        commands['sol3_open']()
+                        wait_log_stop(HI_MAX_TIME_FAST, 'p', lambda p: p > p_thresh, inflating_trip_msg)
+                        commands['sol3_close']()
+                # slow inflating
                 commands['sol2_open']()
-                wait_log_stop(HI_MAX_TIME, 'p', lambda p: p > p_set, inflating_trip_msg)
+                wait_log_stop(HI_MAX_TIME_SLOW, 'p', lambda p: p > p_set, inflating_trip_msg)
                 commands['sol2_close']()
                 inflating_time = time.time() - inflating_start
                 print('    inflating completed in {:.1f} s'.format(inflating_time))
