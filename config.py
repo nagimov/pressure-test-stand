@@ -79,7 +79,7 @@ readbacks = [
     }),
     ('p', {
         'read': lambda: read_volt(AINS['AN_CH_P']),
-        'conv': lambda v: AN_LO + (v - AN_LO_VOLT) * (AN_HI - AN_LO) / (AN_HI_VOLT - AN_LO_VOLT) - 14.696,
+        'conv': lambda v: AN_LO + (v - AN_LO_VOLT) * (AN_HI - AN_LO) / (AN_HI_VOLT - AN_LO_VOLT),# - 14.696,
         'unit': 'psi',
         'print': lambda x: '{:.2f} psi'.format(x),
     }),
