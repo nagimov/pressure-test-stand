@@ -4,12 +4,12 @@ import time
 from config import init, read_all, commands
 from ticker import Ticker
 
-SLEEP = 0.1  # s
+SLEEP = 0.05  # s
 
 # experiment setup
-START_P = 50  # psi
-END_P = 100  # psi
-STEP_P = 1  # psi
+START_P = 0  # psi
+END_P = 400  # psi
+STEP_P = 50  # psi
 FAST_P_THRESH = 50  # psi (threshold at which fast pump closes)
 FAST_P_MIN = 150  # psi (pressure at which fast pump kicks in)
 CYCLES_PER_STEP = 1
